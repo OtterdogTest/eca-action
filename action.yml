@@ -1,0 +1,5 @@
+name: 'Eclipse Contributor Agreement Check'
+description: 'Verifies if all commits are covered by an ECA'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

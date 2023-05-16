@@ -1,0 +1,42 @@
+{
+  "name": "eca-action",
+  "version": "0.0.1",
+  "description": "GitHub Action for verifying Eclipse Contributor Agreements for commits",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc && ncc build",
+    "buildAndAdd": "npm run build && git add ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OtterdogTest/eca-action.git"
+  },
+  "keywords": [
+    "actions",
+    "node",
+    "setup"
+  ],
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "@octokit/rest": "^19.0.8",
+    "actions-toolkit": "^6.0.1",
+    "husky": "^8.0.3",
+    "lodash": "^4.17.21",
+    "node-fetch": "^3.3.1"
+  },
+  "devDependencies": {
+    "@octokit/types": "^9.2.2",
+    "@types/node": "^20.1.5",
+    "@zeit/ncc": "^0.22.3",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.4"
+  },
+  "author": "netomi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OtterdogTest/eca-action/issues"
+  },
+  "homepage": "https://github.com/OtterdogTest/eca-action"
+}
