@@ -20,13 +20,8 @@ export async function run() {
       return
     }
 
-    const token = process.env.GITHUB_TOKEN
-    if (token === undefined || token.trim() === "") {
-      core.error(`No token available`)
-      return
-    }
-
-    const client = github.getOctokit(process.env.GITHUB_TOKEN as string)
+    const token = core.getInput('repo-token');
+    const client = github.getOctokit(token)
 
     const commitsListed = await client.rest.pulls.listCommits({
       owner: repo?.owner.login as string,

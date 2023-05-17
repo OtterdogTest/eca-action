@@ -1,5 +1,10 @@
 name: 'Eclipse Contributor Agreement Check'
 description: 'Verifies if all commits are covered by an ECA'
+inputs:
+  repo-token:
+    description: 'The GitHub token used to manage labels'
+    required: false
+    default: ${{ github.token }}
 runs:
   using: 'node16'
   main: 'dist/index.js'
