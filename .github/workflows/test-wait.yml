@@ -22,4 +22,4 @@ jobs:
         if: ${{ steps.wait-for-status.outputs.state != 'success' }}
         with:
           script: |
-            core.setFailed(${{ steps.wait-for-status.outputs.description }})
+            core.setFailed('${{ steps.wait-for-status.outputs.description }}')
