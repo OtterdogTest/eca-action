@@ -17,20 +17,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           statusName: "eclipsefdn/eca"
 
-      - uses: LouisBrunner/checks-action@v1.6.0
-        if: steps.wait-for-status.outputs.state == 'success'
+      - name: Fail if not successful
+        uses: actions/github-script@v3
+        if: ${{ steps.wait-for-status.outputs.state != 'success' }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: eca-check
-          conclusion: 'success'
-          output: |
-            {"summary":"${{ steps.wait-for-status.outputs.description }}"}
-
-      - uses: LouisBrunner/checks-action@v1.6.0
-        if: steps.wait-for-status.outputs.state != 'success'
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: eca-check
-          conclusion: 'failure'
-          output: |
-            {"summary":"${{ steps.wait-for-status.outputs.description }}"}
+          script: |
+            core.setFailed(steps.wait-for-status.outputs.description)
