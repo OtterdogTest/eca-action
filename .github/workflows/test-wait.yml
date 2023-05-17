@@ -1,0 +1,18 @@
+name: "eca-check"
+on:
+  pull_request:
+
+permissions:
+  checks: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for eclipsefdn/eca check to run
+        uses: fountainhead/action-wait-for-check@v1.1.0
+        id: wait-for-eca-check
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: eclipsefdn/eca
+          ref: ${{ github.event.pull_request.head.sha }}
