@@ -3,10 +3,13 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  pull-requests: read
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
     - uses: OtterdogTest/eca-action@main
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}

@@ -21,11 +21,11 @@ export async function run() {
     }
 
     const token = process.env.GITHUB_TOKEN
-    if (typeof token === 'undefined' || token.trim() === "") {
+    if (token === undefined || token.trim() === "") {
       core.error(`No token available`)
       return
     }
-    
+
     const client = github.getOctokit(process.env.GITHUB_TOKEN as string)
 
     const commitsListed = await client.rest.pulls.listCommits({
