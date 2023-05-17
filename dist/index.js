@@ -53,11 +53,18 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             core.info(`ECA-Action bot has started the process`);
-            const { eventName, payload: { repository: repo, pull_request: pr } } = github.context;
+            const token = core.getInput('repo-token', { required: true });
+            const { context } = github;
+            const ownership = {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+            };
+            const eventName = context.eventName;
             if (validEvents.indexOf(eventName) < 0) {
                 core.error(`Invalid event: ${eventName}`);
                 return;
             }
+            const { payload: { repository: repo, pull_request: pr } } = github.context;
             if (repo === undefined) {
                 core.error(`Undefined repo`);
                 return;
@@ -66,15 +73,10 @@ function run() {
                 core.error(`Undefined pull request`);
                 return;
             }
-            const token = core.getInput('repo-token');
-            const client = github.getOctokit(token);
             core.info("Getting commits for PR " + pr.number);
-            client.rest.repos.listCommits;
-            const commitsListed = yield client.rest.pulls.listCommits({
-                owner: repo.owner.login,
-                repo: repo.name,
-                pull_number: pr.number,
-            });
+            const octokit = github.getOctokit(token);
+            octokit.rest.repos.listCommits;
+            const commitsListed = yield octokit.rest.pulls.listCommits(Object.assign(Object.assign({}, ownership), { pull_number: pr.number }));
             let commits = [];
             for (const commit of commitsListed.data) {
                 commits.push({
@@ -109,6 +111,9 @@ function run() {
             //const data = await response.json();
             const text = yield response.text();
             core.info(text);
+            for (let commit of requestBody.commits) {
+                octokit.rest.repos.createCommitStatus(Object.assign(Object.assign({}, ownership), { sha: commit.hash, state: "success", context: "eca-validation" }));
+            }
         }
         catch (error) {
             if (error instanceof Error)

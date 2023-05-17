@@ -11,18 +11,21 @@ export async function run() {
   try {
     core.info(`ECA-Action bot has started the process`)
 
-    const {
-      eventName,
-      payload: {
-        repository: repo,
-        pull_request: pr
-      }
-    } = github.context
+    const token = core.getInput('repo-token', { required: true });
 
+    const { context } = github
+    const ownership = {
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+    }
+
+    const eventName = context.eventName
     if (validEvents.indexOf(eventName) < 0) {
       core.error(`Invalid event: ${eventName}`)
       return
     }
+
+    const { payload: { repository: repo, pull_request: pr} } = github.context
 
     if (repo === undefined) {
       core.error(`Undefined repo`)
@@ -34,15 +37,13 @@ export async function run() {
       return
     }
 
-    const token = core.getInput('repo-token');
-    const client = github.getOctokit(token)
 
     core.info("Getting commits for PR " + pr.number)
 
-    client.rest.repos.listCommits
-    const commitsListed = await client.rest.pulls.listCommits({
-      owner: repo.owner.login as string,
-      repo: repo.name as string,
+    const octokit = github.getOctokit(token)
+    octokit.rest.repos.listCommits
+    const commitsListed = await octokit.rest.pulls.listCommits({
+      ...ownership,
       pull_number: pr.number as number,
     })
 
@@ -87,6 +88,14 @@ export async function run() {
     const text = await response.text();
     core.info(text)
 
+    for (let commit of requestBody.commits) {
+      octokit.rest.repos.createCommitStatus({
+        ...ownership,
+        sha: commit.hash,
+        state: "success",
+        context: "eca-validation"
+      })
+    }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
