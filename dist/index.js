@@ -3252,6 +3252,7 @@ function run() {
             }
             const token = core.getInput('repo-token');
             const client = github.getOctokit(token);
+            core.info("Getting commits for PR " + (pr === null || pr === void 0 ? void 0 : pr.number));
             const commitsListed = yield client.rest.pulls.listCommits({
                 owner: repo === null || repo === void 0 ? void 0 : repo.owner.login,
                 repo: repo === null || repo === void 0 ? void 0 : repo.name,
@@ -3259,6 +3260,7 @@ function run() {
             });
             let commits = commitsListed.data;
             core.setOutput('commits', JSON.stringify(commits));
+            core.info("commits: " + JSON.stringify(commits));
         }
         catch (error) {
             if (error instanceof Error)

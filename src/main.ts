@@ -23,6 +23,8 @@ export async function run() {
     const token = core.getInput('repo-token');
     const client = github.getOctokit(token)
 
+    core.info("Getting commits for PR " + pr?.number)
+
     const commitsListed = await client.rest.pulls.listCommits({
       owner: repo?.owner.login as string,
       repo: repo?.name as string,
@@ -32,6 +34,8 @@ export async function run() {
     let commits = commitsListed.data
 
     core.setOutput('commits', JSON.stringify(commits))
+
+    core.info("commits: " + JSON.stringify(commits))
 
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
