@@ -1,6 +1,10 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
+import fetch from 'node-fetch';
+
+const ECLIPSE_API_URL='https://api.eclipse.org'
+
 const validEvents: string[] = ['pull_request']
 
 export async function run() {
@@ -46,12 +50,12 @@ export async function run() {
     for (const commit of commitsListed.data) {
       commits.push({
         author: {
-          name: commit?.author?.name,
-          mail: commit?.author?.email
+          name: commit?.commit?.author?.name,
+          mail: commit?.commit?.author?.email
         },
         committer: {
-          name: commit?.committer?.name,
-          mail: commit?.committer?.email
+          name: commit?.commit?.committer?.name,
+          mail: commit?.commit?.committer?.email
         },
 
         subject: commit?.commit.message,
@@ -68,19 +72,20 @@ export async function run() {
 
     core.info("requestBody: " + JSON.stringify(requestBody))
 
-    // import fetch from 'node-fetch';
-    //
-    // const body = {a: 1};
-    //
-    // const response = await fetch('https://httpbin.org/post', {
-    //   method: 'post',
-    //   body: JSON.stringify(body),
-    //   headers: {'Content-Type': 'application/json'}
-    // });
-    // const data = await response.json();
-    //
-    // console.log(data);
+    let requestBodyJson = JSON.stringify(requestBody).replace(/[\n\r]+/g, '')
 
+    const response = await fetch(ECLIPSE_API_URL + '/git/eca', {
+      method: 'post',
+      body: requestBodyJson,
+      headers: {
+        'Content-Type': 'application/json',
+        'charset': 'utf-8'
+      }
+    });
+
+    const data = await response.json();
+    const text = await response.text();
+    core.info(text)
 
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
