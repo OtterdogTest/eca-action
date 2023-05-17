@@ -16,3 +16,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           statusName: "eclipsefdn/eca"
+
+      - uses: LouisBrunner/checks-action@v1.6.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: eca-check
+          conclusion: ${{ steps.wait-for-status.outputs.state }}
+          output: |
+            {"summary":"${{ steps.wait-for-status.outputs.description }}"}
