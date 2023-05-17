@@ -8,11 +8,11 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Wait for eclipsefdn/eca check to run
-        uses: fountainhead/action-wait-for-check@v1.1.0
-        id: wait-for-eca-check
+      - name: Wait for eclipsefdn/eca status check to complete
+        uses: autotelic/action-wait-for-status-check@v1
+        id: wait-for-status
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: eclipsefdn/eca
-          ref: ${{ github.event.pull_request.head.sha }}
+          statusName: "eclipsefdn/eca"
