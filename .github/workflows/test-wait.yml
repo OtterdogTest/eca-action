@@ -18,10 +18,19 @@ jobs:
           statusName: "eclipsefdn/eca"
 
       - uses: LouisBrunner/checks-action@v1.6.0
-        if: always()
+        if: steps.wait-for-status.outputs.state == 'success'
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: eca-check
-          conclusion: ${{ steps.wait-for-status.outputs.state }}
+          conclusion: 'success'
+          output: |
+            {"summary":"${{ steps.wait-for-status.outputs.description }}"}
+
+      - uses: LouisBrunner/checks-action@v1.6.0
+        if: steps.wait-for-status.outputs.state != 'success'
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: eca-check
+          conclusion: 'failure'
           output: |
             {"summary":"${{ steps.wait-for-status.outputs.description }}"}
