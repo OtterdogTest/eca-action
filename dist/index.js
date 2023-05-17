@@ -106,7 +106,7 @@ function run() {
                     'charset': 'utf-8'
                 }
             });
-            const data = yield response.json();
+            //const data = await response.json();
             const text = yield response.text();
             core.info(text);
         }

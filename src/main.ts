@@ -83,7 +83,7 @@ export async function run() {
       }
     });
 
-    const data = await response.json();
+    //const data = await response.json();
     const text = await response.text();
     core.info(text)
 
