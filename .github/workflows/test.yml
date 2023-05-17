@@ -1,0 +1,10 @@
+name: "eca validation test"
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: OtterdogTest/eca-action@main
