@@ -3242,6 +3242,7 @@ const core = __importStar(__webpack_require__(470));
 const github = __importStar(__webpack_require__(469));
 const validEvents = ['pull_request'];
 function run() {
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             core.info(`ECA-Action bot has started the process`);
@@ -3250,17 +3251,57 @@ function run() {
                 core.error(`Invalid event: ${eventName}`);
                 return;
             }
+            if (repo === undefined) {
+                core.error(`Undefined repo`);
+                return;
+            }
+            if (pr === undefined) {
+                core.error(`Undefined pull request`);
+                return;
+            }
             const token = core.getInput('repo-token');
             const client = github.getOctokit(token);
-            core.info("Getting commits for PR " + (pr === null || pr === void 0 ? void 0 : pr.number));
+            core.info("Getting commits for PR " + pr.number);
+            client.rest.repos.listCommits;
             const commitsListed = yield client.rest.pulls.listCommits({
-                owner: repo === null || repo === void 0 ? void 0 : repo.owner.login,
-                repo: repo === null || repo === void 0 ? void 0 : repo.name,
-                pull_number: pr === null || pr === void 0 ? void 0 : pr.number,
+                owner: repo.owner.login,
+                repo: repo.name,
+                pull_number: pr.number,
             });
-            let commits = commitsListed.data;
-            core.setOutput('commits', JSON.stringify(commits));
-            core.info("commits: " + JSON.stringify(commits));
+            let commits = [];
+            for (const commit of commitsListed.data) {
+                commits.push({
+                    author: {
+                        name: (_a = commit === null || commit === void 0 ? void 0 : commit.author) === null || _a === void 0 ? void 0 : _a.name,
+                        mail: (_b = commit === null || commit === void 0 ? void 0 : commit.author) === null || _b === void 0 ? void 0 : _b.email
+                    },
+                    committer: {
+                        name: (_c = commit === null || commit === void 0 ? void 0 : commit.committer) === null || _c === void 0 ? void 0 : _c.name,
+                        mail: (_d = commit === null || commit === void 0 ? void 0 : commit.committer) === null || _d === void 0 ? void 0 : _d.email
+                    },
+                    subject: commit === null || commit === void 0 ? void 0 : commit.commit.message,
+                    hash: commit === null || commit === void 0 ? void 0 : commit.sha,
+                    parents: commit === null || commit === void 0 ? void 0 : commit.parents.map(parent => parent.sha)
+                });
+            }
+            let requestBody = {
+                repoUrl: repo.html_url,
+                provider: "github",
+                commits: commits
+            };
+            core.info("requestBody: " + JSON.stringify(requestBody));
+            // import fetch from 'node-fetch';
+            //
+            // const body = {a: 1};
+            //
+            // const response = await fetch('https://httpbin.org/post', {
+            //   method: 'post',
+            //   body: JSON.stringify(body),
+            //   headers: {'Content-Type': 'application/json'}
+            // });
+            // const data = await response.json();
+            //
+            // console.log(data);
         }
         catch (error) {
             if (error instanceof Error)
